@@ -1,36 +1,59 @@
 package Maze_files;
 
 public class MazeCreator {
-    PathFinder path = new PathFinder();
 
-    public int[][] generateRandomMaze(int size) {
+    private static int startX;
+    private static int startY;
+    private static int endX;
+    private static int endY;
 
-        int[][] mazeMatrix = new int[size][size];
+    private int[][] generateRandomMaze(int rowsCount, int columnsCount) {
 
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
+        int[][] mazeMatrix = new int[rowsCount][columnsCount];
+
+        for (int i = 0; i < rowsCount; i++) {
+            for (int j = 0; j < columnsCount; j++) {
                 if (((int) (Math.random() * 100)) <= 30) {
                     mazeMatrix[i][j] = 1;
                 } else
                     mazeMatrix[i][j] = 0;
             }
         }
-        // случайное число от 0 до (size - 1)
-        int startX = (int)(Math.random() * 1000) % 7;
+        // случайное число от 0 до (rowsCount - 1)
+        startX = (int)(Math.random() * 1000) % 7;
 
-        // либо 0, либо (size - 1)
-        int startY = (int)(Math.random() * 1000) % 2 * (mazeMatrix.length - 1);
+        // либо 0, либо (columnsCount - 1)
+        startY = (int)(Math.random() * 1000) % 2 * (columnsCount - 1);
 
-        // случайное число от 0 до (size - 1)
-        int endX = (int)(Math.random() * 1000) % 7;
+        // случайное число от 0 до (rowsCount - 1)
+        endX = (int)(Math.random() * 1000) % 7;
 
-        // Если startY = 0, то endY = (size - 1) и наоборот
-        int endY = (startY == 0) ? (mazeMatrix.length - 1) : 0;
+        // Если startY = 0, то endY = (columnsCount - 1) и наоборот
+        endY = (startY == 0) ? (columnsCount - 1) : 0;
+
+        MazeCoords start = new MazeCoords(startX, startY);
+        MazeCoords exit = new MazeCoords(endX, endY);
 
         while (true) {
-            if (path.hasPathToExit(mazeMatrix, startX, startY, endX, endY) > 0) {
+            if (PathFinder.hasExitPath(mazeMatrix, start, exit)) {
                 return mazeMatrix;
-            } else generateRandomMaze(size);
+            } else mazeMatrix = generateRandomMaze(rowsCount, columnsCount);
         }
+    }
+
+    public static int getStartX() {
+        return startX;
+    }
+
+    public static int getStartY() {
+        return startY;
+    }
+
+    public static int getEndX() {
+        return endX;
+    }
+
+    public static int getEndY() {
+        return endY;
     }
 }

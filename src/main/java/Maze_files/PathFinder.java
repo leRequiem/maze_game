@@ -5,7 +5,7 @@ import java.util.Queue;
 
 public class PathFinder {
 
-    public int hasPathToExit(int[][] matrix, int startX, int startY, int endX, int endY) {
+    public static int shortestPathToExit(int[][] matrix, MazeCoords start, MazeCoords exit) {
 
         int rows = matrix.length;
         int cols = matrix[0].length;
@@ -14,8 +14,8 @@ public class PathFinder {
 
         // Начало BFS
         Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[] {startX, startY});
-        visited[startX][startY] = true;
+        queue.offer(new int[] {start.x, start.y});
+        visited[start.x][start.x] = true;
 
 
         int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
@@ -25,7 +25,7 @@ public class PathFinder {
             int x = current[0];
             int y = current[1];
 
-            if (x == endX && y == endY) {
+            if (x == exit.x && y == exit.y) {
                 // Достигли точки выхода
                 return steps;
             }
@@ -46,5 +46,9 @@ public class PathFinder {
 
         // Путь не найден
         return -1;
+    }
+
+    public static boolean hasExitPath(int[][] matrix, MazeCoords start, MazeCoords exit) {
+        return shortestPathToExit(matrix, start, exit) != -1;
     }
 }
