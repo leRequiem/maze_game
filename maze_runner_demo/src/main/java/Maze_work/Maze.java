@@ -57,4 +57,21 @@ public class Maze {
     public int getSteps() {
         return steps;
     }
+
+    public void drawMaze() {
+        for (int i = 0; i < rowsCount; i++) {
+            for (int j = 0; j < columnsCount; j++) {
+                if (i == startX && j == startY) {
+                    System.out.print("S");
+                } else if (i == endX && j == endY) {
+                    System.out.print("E");
+                } else if (maze[i][j] == 0) {
+                    System.out.print("0");
+                } else
+                    System.out.print("1");
+                System.out.print(" ");
+            }
+            System.out.println();
+        }
+    }
 }

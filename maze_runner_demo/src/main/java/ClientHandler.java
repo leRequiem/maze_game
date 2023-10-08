@@ -17,8 +17,13 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
 
+        String filename = "maze_runner_demo/src/main/resources/overallRating.txt";
+
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true)) {
+             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+             FileWriter fileWriter = new FileWriter(filename, true)) {
+
+            clearLogFile(filename);
 
             String clientMessage;
             while ((clientMessage = in.readLine()) != null) {
@@ -35,19 +40,25 @@ public class ClientHandler implements Runnable {
 
                     int[][] mazeMatrix = Server.getMaze();
                     maze = new Maze(mazeMatrix, MazeCreator.getStartX(), MazeCreator.getStartY(), MazeCreator.getEndX(), MazeCreator.getEndY());
+                    maze.drawMaze();
+
                     out.println(JsonRequests.statusStart(clientName, MazeCreator.getStartX(), MazeCreator.getStartY()).toString());
                 } else if (command.equals("direction")) {
                     String direction = clientRequestJSON.getString("direction");
-                    if (maze.move(direction) && maze.exitWasReached()) {
-                        // save to rating
-                        out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps).toString());
+                    boolean moveResult = maze.move(direction);
+
+                    if (moveResult && maze.exitWasReached()) {
+                        // сохраняем результат в файл с общим рейтингом
+                        fileWriter.write(clientName + "," + maze.getSteps() + "," + minSteps + "\n");
+                        out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filename).toString());
                         System.out.println("Игрок " + clientName + " завершил игру");
                     } else {
-                        out.println(JsonRequests.statusGo(maze.move(direction)).toString());
+                        out.println(JsonRequests.statusGo(moveResult).toString());
                         System.out.println("Игрок " + clientName + " указал направление: " + direction);
                     }
+
                 } else if (command.equals("stop")) {
-                    out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps).toString());
+                    out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filename).toString());
                     System.out.println("Игрок " + clientName + " досрочно завершил игру");
                     break;
                 } else {
@@ -60,6 +71,19 @@ public class ClientHandler implements Runnable {
 
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    // Метод для очистки файла
+    private void clearLogFile(String filePath) {
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
