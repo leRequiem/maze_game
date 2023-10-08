@@ -8,7 +8,7 @@ import java.util.Scanner;
 public class Gamer {
     public static void main(String[] args) {
         String host = "127.0.0.1";
-        int serverPort = 20001;
+        int serverPort = 20002;
 
         try (Socket socket = new Socket(host, serverPort);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -16,8 +16,9 @@ public class Gamer {
              Scanner scanner = new Scanner(System.in)) {
 
             System.out.println("Для начала игры напишите свое имя: ");
-            String inputLine = scanner.nextLine();
+            String inputLine;
 
+            inputLine = scanner.nextLine();
             if (inputLine.equals("stop")) {
                 out.println(JsonRequests.commandStop());
             } else
@@ -30,7 +31,6 @@ public class Gamer {
             String status = serverResponseJSON.getString("status");
             if (status.equals("start")) {
                 System.out.println(serverResponseJSON.getString("message"));
-                int[] startPoint = toIntArray(serverResponseJSON.getJSONArray("startPoint"));
 
                 // Указываем направление движения
                 while (true) {
@@ -39,15 +39,20 @@ public class Gamer {
 
                     if (moveDirection.equals("stop")) {
                         out.println(JsonRequests.commandStop().toString());
+                        serverResponse = in.readLine();
+                        serverResponseJSON = new JSONObject(serverResponse);
+
+                        String ratingArray = JsonRequests.JsonArrayToString(serverResponseJSON.getJSONArray("rating"));
+                        System.out.println("Игра была завершена досрочно");
+                        System.out.println("Рейтинг: [" + ratingArray + ']');
+                        break;
                     }
 
-                    while (true) {
-                        if (moveDirection.equals("u") || moveDirection.equals("r") || moveDirection.equals("d") || moveDirection.equals("l")) {
-                            out.println(JsonRequests.commandDirection(moveDirection));
-                            break;
-                        } else {
-                            System.out.println("Неизвестная команда: " + moveDirection);
-                        }
+                    if (moveDirection.equals("u") || moveDirection.equals("r") || moveDirection.equals("d") || moveDirection.equals("l")) {
+                        out.println(JsonRequests.commandDirection(moveDirection));
+                    } else {
+                        System.out.println("Неизвестная команда: " + moveDirection);
+                        continue;
                     }
 
                     serverResponse = in.readLine();
@@ -63,7 +68,15 @@ public class Gamer {
                     }
 
                     else if (serverResponseJSON.getString("status").equals("stop")) {
-                        System.out.println("Игра была закончена");
+                        int steps = Integer.parseInt(serverResponseJSON.getString("result"));
+                        int minSteps = Integer.parseInt(serverResponseJSON.getString("min"));
+                        String ratingArray = JsonRequests.JsonArrayToString(serverResponseJSON.getJSONArray("rating"));
+
+                        System.out.println("Лабиринт был пройден");
+                        System.out.println("Сделано шагов: " + steps);
+                        System.out.println("Минимальное число шагов: " + minSteps);
+                        System.out.println("Рейтинг: [" + ratingArray + ']');
+                        break;
                     }
                 }
             }

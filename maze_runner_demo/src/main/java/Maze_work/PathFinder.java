@@ -15,7 +15,7 @@ public class PathFinder {
         // Начало BFS
         Queue<int[]> queue = new LinkedList<>();
         queue.offer(new int[] {start.x, start.y});
-        visited[start.x][start.x] = true;
+        visited[start.x][start.y] = true;
 
 
         int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
