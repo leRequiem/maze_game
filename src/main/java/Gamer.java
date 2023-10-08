@@ -19,9 +19,9 @@ public class Gamer {
             String inputLine = scanner.nextLine();
 
             if (inputLine.equals("stop")) {
-                out.print(JsonRequests.commandStop() + "\n");
+                out.println(JsonRequests.commandStop());
             } else
-                out.print(JsonRequests.commandStart(inputLine).toString() + "\n");
+                out.println(JsonRequests.commandStart(inputLine).toString());
 
             // Читаем ответ сервера
             String serverResponse = in.readLine();
@@ -38,12 +38,12 @@ public class Gamer {
                     String moveDirection = scanner.nextLine();
 
                     if (moveDirection.equals("stop")) {
-                        out.print(JsonRequests.commandStop().toString() + "\n");
+                        out.println(JsonRequests.commandStop().toString());
                     }
 
                     while (true) {
                         if (moveDirection.equals("u") || moveDirection.equals("r") || moveDirection.equals("d") || moveDirection.equals("l")) {
-                            out.print(JsonRequests.commandDirection(moveDirection) + "\n");
+                            out.println(JsonRequests.commandDirection(moveDirection));
                             break;
                         } else {
                             System.out.println("Неизвестная команда: " + moveDirection);
@@ -63,7 +63,7 @@ public class Gamer {
                     }
 
                     else if (serverResponseJSON.getString("status").equals("stop")) {
-
+                        System.out.println("Игра была закончена");
                     }
                 }
             }

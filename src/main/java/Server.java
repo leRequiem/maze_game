@@ -17,11 +17,11 @@ public class Server {
 
         try (ServerSocket server = new ServerSocket(SERVER_PORT)) {
 
-            System.out.println("Waiting for client...");
+            System.out.println("Ожизалние клиента...");
 
             while (true) {
                 Socket clientSocket = server.accept();
-                System.out.println("Client connected");
+                System.out.println("Клиент присоединился");
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket);
                 clients.add(clientHandler);

@@ -35,24 +35,25 @@ public class ClientHandler implements Runnable {
 
                     int[][] mazeMatrix = Server.getMaze();
                     maze = new Maze(mazeMatrix, MazeCreator.getStartX(), MazeCreator.getStartY(), MazeCreator.getEndX(), MazeCreator.getEndY());
-                    out.print(JsonRequests.statusStart(clientName, MazeCreator.getStartX(), MazeCreator.getStartY()).toString() + "\n");
+                    out.println(JsonRequests.statusStart(clientName, MazeCreator.getStartX(), MazeCreator.getStartY()).toString());
                 } else if (command.equals("direction")) {
                     String direction = clientRequestJSON.getString("direction");
-                    if (maze.exitWasReached() && maze.move(direction)) {
+                    if (maze.move(direction) && maze.exitWasReached()) {
                         // save to rating
-                        out.print(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps).toString() + "\n");
+                        out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps).toString());
+                        System.out.println("Игрок " + clientName + " завершил игру");
                     } else {
-                        out.print(JsonRequests.statusGo(maze.move(direction)).toString() + "\n");
+                        out.println(JsonRequests.statusGo(maze.move(direction)).toString());
+                        System.out.println("Игрок " + clientName + " указал направление: " + direction);
                     }
                 } else if (command.equals("stop")) {
-                    out.print(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps).toString() + "\n");
+                    out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps).toString());
+                    System.out.println("Игрок " + clientName + " досрочно завершил игру");
                     break;
                 } else {
                     // Неизвестная команда
-                    JSONObject response = new JSONObject();
-                    response.put("error", "Неизвестная команда");
-                    out.write(response.toString() + "\n");
-                    out.flush();
+                    out.println(JsonRequests.wrongCommand().toString());
+                    System.out.println("Игрок ввел неопознанную команду");
                 }
             }
             clientSocket.close();

@@ -3,6 +3,7 @@ import org.json.JSONObject;
 
 public class JsonRequests {
 
+    // Все JSON запросы отправляемые клиенту сервером
     public static JSONObject statusStart(String clientName, int startX, int startY) {
         int[] temp = new int[] {startX, startY};
         JSONArray startPoint = new JSONArray(temp);
@@ -14,6 +15,29 @@ public class JsonRequests {
         return responseJSON;
     }
 
+    public static JSONObject statusGo(boolean moveIsPossible) {
+        JSONObject responseJSON = new JSONObject();
+        responseJSON.put("status", "go");
+        responseJSON.put("result", moveIsPossible? 0 : 1);
+        return responseJSON;
+    }
+
+    public static JSONObject statusStop(String steps, String minSteps) {
+        JSONObject responseJSON = new JSONObject();
+        responseJSON.put("status", "stop");
+        responseJSON.put("result", steps);
+        responseJSON.put("min", minSteps);
+        responseJSON.put("rating", "rating");
+        return responseJSON;
+    }
+
+    public static JSONObject wrongCommand() {
+        JSONObject responseJSON = new JSONObject();
+        responseJSON.put("error", "Неизвестная команда");
+        return responseJSON;
+    }
+
+    // все JSON запросы отправлемые серверу клиентом
     public static JSONObject commandStart(String clientName) {
         JSONObject responseJSON = new JSONObject();
         responseJSON.put("command", "start");
@@ -34,19 +58,9 @@ public class JsonRequests {
         return responseJSON;
     }
 
-    public static JSONObject statusGo(boolean moveIsPossible) {
-        JSONObject responseJSON = new JSONObject();
-        responseJSON.put("status", "go");
-        responseJSON.put("result", moveIsPossible? 0 : 1);
-        return responseJSON;
-    }
+    public static JSONArray printRating() {
+        JSONArray ratingArray = new JSONArray();
 
-    public static JSONObject statusStop(String steps, String minSteps) {
-        JSONObject responseJSON = new JSONObject();
-        responseJSON.put("status", "stop");
-        responseJSON.put("result", steps);
-        responseJSON.put("min", minSteps);
-        responseJSON.put("rating", "rating");
-        return responseJSON;
+        return ratingArray;
     }
 }
