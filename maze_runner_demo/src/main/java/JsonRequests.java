@@ -49,14 +49,14 @@ public class JsonRequests {
             JSONObject jsonObject = new JSONObject();
 
             while ((line = reader.readLine()) != null) {
-                String[] lineParts = line.trim().split(",");
+                String[] lineParts = line.split(",");
                 if (lineParts.length == 3) {
-                    String clientName = lineParts[0];
-                    String stepsCount = lineParts[1];
+                    String userName = lineParts[0];
+                    String steps = lineParts[1];
                     String minSteps = lineParts[2];
 
-                    jsonObject.put("name", clientName);
-                    jsonObject.put("steps", stepsCount);
+                    jsonObject.put("name", userName);
+                    jsonObject.put("steps", steps);
                     jsonObject.put("min", minSteps);
                 }
                 ratingJsonArray.put(jsonObject);
@@ -75,6 +75,7 @@ public class JsonRequests {
             String userName = jsonObject.getString("name");
             String steps = jsonObject.getString("steps");
             String minSteps = jsonObject.getString("min");
+
             rating.append("Имя: ")
                     .append(userName)
                     .append(", Кол-во шагов: ")

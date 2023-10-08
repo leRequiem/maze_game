@@ -44,7 +44,7 @@ public class Gamer {
 
                         String ratingArray = JsonRequests.JsonArrayToString(serverResponseJSON.getJSONArray("rating"));
                         System.out.println("Игра была завершена досрочно");
-                        System.out.println("Рейтинг: [" + ratingArray + ']');
+                        System.out.println("Рейтинг: " + ratingArray);
                         break;
                     }
 

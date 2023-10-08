@@ -13,31 +13,30 @@ public class PathFinder {
         int steps = 0;
 
         // Начало BFS
-        Queue<int[]> queue = new LinkedList<>();
-        queue.offer(new int[] {start.x, start.y});
+        Queue<MazeCoords> queue = new LinkedList<>();
+        queue.offer(start);
         visited[start.x][start.y] = true;
 
 
         int[][] directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
 
         while (!queue.isEmpty()) {
-            int[] current = queue.poll();
-            int x = current[0];
-            int y = current[1];
+            MazeCoords current = queue.poll();
 
-            if (x == exit.x && y == exit.y) {
+            if (current.x == exit.x && current.y == exit.y) {
                 // Достигли точки выхода
                 return steps;
             }
 
             // Проверка соседних ячеек
             for (int[] dir : directions) {
-                int newX = x + dir[0];
-                int newY = y + dir[1];
+                int newX = current.x + dir[0];
+                int newY = current.y + dir[1];
 
                 if (newX >= 0 && newX < rows && newY >= 0 && newY < cols
                         && matrix[newX][newY] == 0 && !visited[newX][newY]) {
-                    queue.offer(new int[] {newX, newY});
+                    MazeCoords newCoords = new MazeCoords(newX, newY);
+                    queue.offer(newCoords);
                     visited[newX][newY] = true;
                 }
             }

@@ -23,8 +23,6 @@ public class ClientHandler implements Runnable {
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
              FileWriter fileWriter = new FileWriter(filename, true)) {
 
-            clearLogFile(filename);
-
             String clientMessage;
             while ((clientMessage = in.readLine()) != null) {
 
@@ -50,6 +48,7 @@ public class ClientHandler implements Runnable {
                     if (moveResult && maze.exitWasReached()) {
                         // сохраняем результат в файл с общим рейтингом
                         fileWriter.write(clientName + "," + maze.getSteps() + "," + minSteps + "\n");
+                        fileWriter.flush();
                         out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filename).toString());
                         System.out.println("Игрок " + clientName + " завершил игру");
                     } else {
@@ -71,19 +70,6 @@ public class ClientHandler implements Runnable {
 
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
-        }
-    }
-
-    // Метод для очистки файла
-    private void clearLogFile(String filePath) {
-        File file = new File(filePath);
-        if (file.exists()) {
-            file.delete();
-        }
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
