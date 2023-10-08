@@ -1,3 +1,5 @@
+import Maze_work.MazeCreator;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,8 +10,11 @@ public class Server {
 
     public static final int SERVER_PORT = 20001;
     private static final List<ClientHandler> clients = new ArrayList<>();
+    private static MazeCreator mazeCreator;
 
     public static void main(String[] args) {
+        mazeCreator = new MazeCreator(7, 7);
+
         try (ServerSocket server = new ServerSocket(SERVER_PORT)) {
 
             System.out.println("Waiting for client...");
@@ -25,5 +30,9 @@ public class Server {
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public static int[][] getMaze() {
+        return mazeCreator.getMaze();
     }
 }

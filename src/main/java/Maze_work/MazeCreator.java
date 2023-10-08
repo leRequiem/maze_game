@@ -1,13 +1,26 @@
-package Maze_files;
+package Maze_work;
+
+import lombok.Getter;
 
 public class MazeCreator {
+
+    @Getter
+    private int[][] maze;
+    private final int rowsCount;
+    private final int columnsCount;
 
     private static int startX;
     private static int startY;
     private static int endX;
     private static int endY;
 
-    private int[][] generateRandomMaze(int rowsCount, int columnsCount) {
+    public MazeCreator(int columnsCount, int rowsCount) {
+        this.columnsCount = columnsCount;
+        this.rowsCount = rowsCount;
+        this.maze = generateRandomMaze();
+    }
+
+    private int[][] generateRandomMaze() {
 
         int[][] mazeMatrix = new int[rowsCount][columnsCount];
 
@@ -37,7 +50,7 @@ public class MazeCreator {
         while (true) {
             if (PathFinder.hasExitPath(mazeMatrix, start, exit)) {
                 return mazeMatrix;
-            } else mazeMatrix = generateRandomMaze(rowsCount, columnsCount);
+            } else mazeMatrix = generateRandomMaze();
         }
     }
 

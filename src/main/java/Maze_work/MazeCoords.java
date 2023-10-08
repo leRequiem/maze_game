@@ -1,4 +1,4 @@
-package Maze_files;
+package Maze_work;
 
 import lombok.Getter;
 import lombok.Setter;

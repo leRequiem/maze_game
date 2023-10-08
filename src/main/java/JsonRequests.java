@@ -33,4 +33,20 @@ public class JsonRequests {
         responseJSON.put("command", "stop");
         return responseJSON;
     }
+
+    public static JSONObject statusGo(boolean moveIsPossible) {
+        JSONObject responseJSON = new JSONObject();
+        responseJSON.put("status", "go");
+        responseJSON.put("result", moveIsPossible? 0 : 1);
+        return responseJSON;
+    }
+
+    public static JSONObject statusStop(String steps, String minSteps) {
+        JSONObject responseJSON = new JSONObject();
+        responseJSON.put("status", "stop");
+        responseJSON.put("result", steps);
+        responseJSON.put("min", minSteps);
+        responseJSON.put("rating", "rating");
+        return responseJSON;
+    }
 }

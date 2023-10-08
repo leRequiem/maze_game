@@ -1,4 +1,4 @@
-package Maze_files;
+package Maze_work;
 
 import java.util.LinkedList;
 import java.util.Queue;
