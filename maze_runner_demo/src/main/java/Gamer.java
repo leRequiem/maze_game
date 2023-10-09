@@ -4,11 +4,10 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-
 public class Gamer {
     public static void main(String[] args) {
         String host = "127.0.0.1";
-        int serverPort = 20002;
+        int serverPort = 1111;
 
         try (Socket socket = new Socket(host, serverPort);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -75,7 +74,7 @@ public class Gamer {
                         System.out.println("Лабиринт был пройден");
                         System.out.println("Сделано шагов: " + steps);
                         System.out.println("Минимальное число шагов: " + minSteps);
-                        System.out.println("Рейтинг: [" + ratingArray + ']');
+                        System.out.println("Рейтинг: [" + ratingArray + "]");
                         break;
                     }
                 }

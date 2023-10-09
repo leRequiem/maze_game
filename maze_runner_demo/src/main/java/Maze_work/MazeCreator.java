@@ -44,8 +44,8 @@ public class MazeCreator {
         // Если startY = 0, то endY = (columnsCount - 1) и наоборот
         endY = (startY == 0) ? (columnsCount - 1) : 0;
 
-        MazeCoords start = new MazeCoords(startX, startY);
-        MazeCoords exit = new MazeCoords(endX, endY);
+        int[] start = new int[] {startX, startY};
+        int[] exit = new int[] {endX, endY};
 
         while (true) {
             if (PathFinder.hasExitPath(mazeMatrix, start, exit)) {

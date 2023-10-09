@@ -9,61 +9,66 @@ public class ClientHandler implements Runnable {
     private Socket clientSocket;
     private String clientName;
     private Maze maze;
+    private String filepath;
 
-    public ClientHandler(Socket clientSocket) {
+    public ClientHandler(Socket clientSocket, String filepath) {
         this.clientSocket = clientSocket;
+        this.filepath = filepath;
     }
 
     @Override
     public void run() {
 
-        String filename = "maze_runner_demo/src/main/resources/overallRating.txt";
-
         try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
              PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-             FileWriter fileWriter = new FileWriter(filename, true)) {
+             FileWriter fileWriter = new FileWriter(filepath, true)) {
 
             String clientMessage;
+            label:
             while ((clientMessage = in.readLine()) != null) {
 
                 JSONObject clientRequestJSON = new JSONObject(clientMessage);
                 String command = clientRequestJSON.getString("command");
                 MazeCoords start = new MazeCoords(MazeCreator.getStartX(), MazeCreator.getStartY());
                 MazeCoords exit = new MazeCoords(MazeCreator.getEndX(), MazeCreator.getEndY());
-                String minSteps = String.valueOf(PathFinder.shortestPathToExit(Server.getMaze(), start, exit));
+                String minSteps = String.valueOf(PathFinder.shortestPathToExit(Server.getMaze(), new int[] {start.getX(), start.getY()}, new int[] {exit.getX(), exit.getY()}));
 
-                if (command.equals("start")) {
-                    clientName = clientRequestJSON.getString("clientName");
-                    System.out.println("Игрок " + clientName + " начал игру");
+                switch (command) {
+                    case "start":
+                        clientName = clientRequestJSON.getString("clientName");
+                        System.out.println("Игрок " + clientName + " начал игру");
 
-                    int[][] mazeMatrix = Server.getMaze();
-                    maze = new Maze(mazeMatrix, MazeCreator.getStartX(), MazeCreator.getStartY(), MazeCreator.getEndX(), MazeCreator.getEndY());
-                    maze.drawMaze();
+                        int[][] mazeMatrix = Server.getMaze();
+                        maze = new Maze(mazeMatrix, start.getX(), start.getY(), exit.getX(), exit.getY());
+                        maze.drawMaze();
 
-                    out.println(JsonRequests.statusStart(clientName, MazeCreator.getStartX(), MazeCreator.getStartY()).toString());
-                } else if (command.equals("direction")) {
-                    String direction = clientRequestJSON.getString("direction");
-                    boolean moveResult = maze.move(direction);
+                        out.println(JsonRequests.statusStart(clientName, start.getX(), start.getY()).toString());
+                        break;
+                    case "direction":
+                        String direction = clientRequestJSON.getString("direction");
+                        boolean moveResult = maze.move(direction);
 
-                    if (moveResult && maze.exitWasReached()) {
-                        // сохраняем результат в файл с общим рейтингом
-                        fileWriter.write(clientName + "," + maze.getSteps() + "," + minSteps + "\n");
-                        fileWriter.flush();
-                        out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filename).toString());
-                        System.out.println("Игрок " + clientName + " завершил игру");
-                    } else {
-                        out.println(JsonRequests.statusGo(moveResult).toString());
-                        System.out.println("Игрок " + clientName + " указал направление: " + direction);
-                    }
+                        if (moveResult && maze.exitWasReached()) {
+                            // сохраняем результат в файл с общим рейтингом
+                            fileWriter.write(clientName + "," + maze.getSteps() + "," + minSteps + "\n");
+                            fileWriter.flush();
+                            out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filepath).toString());
+                            System.out.println("Игрок " + clientName + " завершил игру");
+                        } else {
+                            out.println(JsonRequests.statusGo(moveResult).toString());
+                            System.out.println("Игрок " + clientName + " указал направление: " + direction);
+                        }
 
-                } else if (command.equals("stop")) {
-                    out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filename).toString());
-                    System.out.println("Игрок " + clientName + " досрочно завершил игру");
-                    break;
-                } else {
-                    // Неизвестная команда
-                    out.println(JsonRequests.wrongCommand().toString());
-                    System.out.println("Игрок ввел неопознанную команду");
+                        break;
+                    case "stop":
+                        out.println(JsonRequests.statusStop(String.valueOf(maze.getSteps()), minSteps, filepath).toString());
+                        System.out.println("Игрок " + clientName + " досрочно завершил игру");
+                        break label;
+                    default:
+                        // Неизвестная команда
+                        out.println(JsonRequests.wrongCommand().toString());
+                        System.out.println("Игрок ввел неопознанную команду");
+                        break;
                 }
             }
             clientSocket.close();

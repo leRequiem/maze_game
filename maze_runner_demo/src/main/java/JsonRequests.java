@@ -47,13 +47,16 @@ public class JsonRequests {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename)))) {
             String line;
             JSONObject jsonObject = new JSONObject();
+            String userName;
+            String steps;
+            String minSteps;
 
             while ((line = reader.readLine()) != null) {
                 String[] lineParts = line.split(",");
                 if (lineParts.length == 3) {
-                    String userName = lineParts[0];
-                    String steps = lineParts[1];
-                    String minSteps = lineParts[2];
+                    userName = lineParts[0];
+                    steps = lineParts[1];
+                    minSteps = lineParts[2];
 
                     jsonObject.put("name", userName);
                     jsonObject.put("steps", steps);

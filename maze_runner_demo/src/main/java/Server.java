@@ -6,16 +6,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
-
-    public static final int SERVER_PORT = 20002;
+    public static final int SERVER_PORT = 1111;
     private static MazeCreator mazeCreator;
-    private static final String filename = "maze_runner_demo/src/main/resources/overallRating.txt";
+    // если ошибка доступа, то указать абсолютный путь
+    private static final String filepath = "maze_runner_demo/src/main/resources/overallRating.txt";
 
     public static void main(String[] args) {
         mazeCreator = new MazeCreator(7, 7);
 
         try (ServerSocket server = new ServerSocket(SERVER_PORT)) {
-            clearLogFile(filename);
+            clearLogFile(filepath);
 
             System.out.println("Ожидание клиента...");
 
@@ -23,7 +23,7 @@ public class Server {
                 Socket clientSocket = server.accept();
                 System.out.println("Клиент присоединился");
 
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
+                ClientHandler clientHandler = new ClientHandler(clientSocket, filepath);
                 new Thread(clientHandler).start();
             }
         } catch (IOException e) {
